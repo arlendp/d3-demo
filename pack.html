@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>pack</title>
+    <style type="text/css">
+        .pack circle {
+            stroke: #000;
+        }
+    </style>
+</head>
+
+<body>
+    <svg class="pack" width="500" height="500"></svg>
+    <script type="text/javascript" src="d3.v4.js"></script>
+    <script type="text/javascript">
+        d3.json('city.json', function(error, text) {
+            if (error) {
+                throw error;
+            }
+            var root = d3.hierarchy(text).sum(function(d) {
+                return d.children ? 0 : 1;
+            })
+            .sort(function(a, b) {
+                return b.value - a.value;
+            });
+            var svg = d3.select('.pack');
+            d3.pack().size([svg.attr('width') * 0.8, svg.attr('height')])(root);
+            svg.selectAll('circle')
+                .data(root.descendants())
+                .enter()
+                .append('circle')
+                .attr('cx', function(d) {
+                    return d.x;
+                })
+                .attr('cy', function(d) {
+                    return d.y;
+                })
+                .attr('r', function(d) {
+                    return d.r;
+                })
+                .style('fill', function(d) {
+                    return
+                });
+        })
+    </script>
+</body>
+
+</html>

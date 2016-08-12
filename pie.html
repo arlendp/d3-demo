@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>pie</title>
+</head>
+<svg class="pie"></svg>
+
+<body>
+    <script type="text/javascript" src="d3.v4.js"></script>
+    <script type="text/javascript">
+    var data = [{
+        "number": 4,
+        "name": "Locke"
+    }, {
+        "number": 8,
+        "name": "Reyes"
+    }, {
+        "number": 15,
+        "name": "Ford"
+    }, {
+        "number": 16,
+        "name": "Jarrah"
+    }, {
+        "number": 23,
+        "name": "Shephard"
+    }, {
+        "number": 42,
+        "name": "Kwon"
+    }];
+    var innerRadius = 0,
+        outerRadius = 200,
+        offset = 200;
+    var dataset = d3.pie()
+        .value(function(d) {
+            return d.number
+        })
+        .sortValues(function(a, b) {
+            return b - a;
+        })(data);
+    var arc = d3.arc()
+        .innerRadius(innerRadius)
+        .outerRadius(outerRadius);
+    var arcs = d3.select('.pie')
+        .attr('width', 500)
+        .attr('height', 500)
+        .selectAll('g')
+        .data(dataset)
+        .enter()
+        .append('g')
+        .attr('transform', 'translate(' + offset + ", " + offset + ")");
+
+    arcs.append('path')
+        .attr('fill', function(d, i) {
+            return d3.schemeCategory10[i];
+        })
+        .attr('d', function(d) {
+            return arc(d);
+        });
+
+    arcs.append('text')
+        .attr('transform', function(d) {
+            return 'translate(' + arc.centroid(d) + ')';
+        })
+        .style('text-anchor', 'middle')
+        .attr('dy', '0.35em')
+        .text(function(d) {
+            return d.value;
+        });
+    </script>
+</body>
+
+</html>

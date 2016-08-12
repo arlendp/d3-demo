@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>cluster</title>
+    <style type="text/css">
+        .cluster path{
+            fill: none;
+            stroke: #000;
+            stroke-width: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <svg class="cluster" width="500" height="500"></svg>
+    <script type="text/javascript" src="d3.v4.js"></script>
+    <script type="text/javascript">
+    var data = {
+        "name": "中国",
+        "children": [{
+                "name": "浙江",
+                "children": [{
+                    "name": "杭州"
+                }, {
+                    "name": "宁波"
+                }, {
+                    "name": "温州"
+                }, {
+                    "name": "绍兴"
+                }]
+            },
+
+            {
+                "name": "广西",
+                "children": [{
+                    "name": "桂林"
+                }, {
+                    "name": "南宁"
+                }, {
+                    "name": "柳州"
+                }, {
+                    "name": "防城港"
+                }]
+            },
+
+            {
+                "name": "黑龙江",
+                "children": [{
+                    "name": "哈尔滨"
+                }, {
+                    "name": "齐齐哈尔"
+                }, {
+                    "name": "牡丹江"
+                }, {
+                    "name": "大庆"
+                }]
+            },
+
+            {
+                "name": "新疆",
+                "children": [{
+                    "name": "乌鲁木齐"
+                }, {
+                    "name": "克拉玛依"
+                }, {
+                    "name": "吐鲁番"
+                }, {
+                    "name": "哈密"
+                }]
+            }
+        ]
+    }
+    var svg = d3.select('.cluster');
+    var root = d3.hierarchy(data);
+    var cluster = d3.cluster().size([svg.attr('width') * 0.8, svg.attr('height') * 0.8])(root);
+    svg.append('g')
+        .attr('class', 'circle-container')
+        .attr('transform', 'translate(50, 50)')
+        .selectAll('cirlce')
+        .data(cluster.descendants())
+        .enter()
+        .append('circle')
+        .attr('cx', function(d) {return d.x;})
+        .attr('cy', function(d) {return d.y;})
+        .attr('r', function(d) {return d.height + 2;});
+    svg.append('g')
+        .attr('class', 'path-container')
+        .attr('transform', 'translate(50, 50)')
+        .selectAll('path')
+        .data(cluster.links())
+        .enter()
+        .append('path')
+        .attr('d', function(d) {
+            return 'M ' + d.source.x + ' ' + d.source.y + ' C ' + d.source.x + ' ' +  (d.source.y + d.target.y) / 2 + ', ' + d.target.x + ' ' + (d.source.y + d.target.y) / 2 + ', ' + d.target.x + ' ' + d.target.y;
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <style type="text/css">
+    .box line {
+        stroke: #000;
+        stroke-width: 1.5px;
+    }
+
+    .box .ver-line {
+        stroke-dasharray: 3, 3;
+    }
+
+    .box rect {
+        fill: #fff;
+        stroke: #000;
+    }
+    </style>
+</head>
+
+<body>
+    <svg class="box" width="300" height="500"></svg>
+    <script type="text/javascript" src="d3.v4.js"></script>
+    <script type="text/javascript">
+    var box = d3.select('.box');
+    var lineWidth = 20,
+        gap = 5,
+        duration = 2000;
+    var index = ['first', 'second', 'third', 'fourth', 'fifth'];
+    var t = d3.transition().duration(1000).ease(d3.easeLinear);
+    d3.tsv('box.tsv', type, function(error, data) {
+        //计算所有数据中的最大值和最小值
+        var allData = [];
+        for (var i = 0; i < data.length; i++) {
+            allData = allData.concat(d3.values(data[i]));
+        }
+        var extent = d3.extent(allData.filter(function(v) {
+            return !isNaN(v);
+        }));
+        //以最小和最大值的范围建立一个scale
+        var rangeScale = d3.scaleLinear().domain(extent).range([box.attr('height') - 10, 10]);
+        var container = box.append('g')
+            .attr('transform', 'translate(100, 0)');
+
+        //第一条横线
+        var hor_line_1 = container.append('line')
+            .attr('x1', 0)
+            .attr('x2', lineWidth)
+            .attr('y1', rangeScale(data[0]['first']))
+            .attr('y2', rangeScale(data[0]['first']));
+
+        //竖线
+        var ver_line = container.append('line')
+            .attr('x1', lineWidth / 2)
+            .attr('x2', lineWidth / 2)
+            .attr('y1', rangeScale(data[0]['first']))
+            .attr('y2', rangeScale(data[4]['first']))
+            .attr('class', 'ver-line');
+
+        var rect = container.append('rect')
+            .attr('x', 0)
+            .attr('y', rangeScale(data[1]['first']))
+            .attr('width', lineWidth)
+            .attr('height', rangeScale(data[3]['first']) - rangeScale(data[1]['first']));
+
+        var hor_line_2 = container.append('line')
+            .attr('x1', 0)
+            .attr('x2', lineWidth)
+            .attr('y1', rangeScale(data[2]['first']))
+            .attr('y2', rangeScale(data[2]['first']));
+
+        var hor_line_3 = container.append('line')
+            .attr('x1', 0)
+            .attr('x2', lineWidth)
+            .attr('y1', rangeScale(data[4]['first']))
+            .attr('y2', rangeScale(data[4]['first']));
+
+        var text_1 = container.append('text')
+            .attr('x', lineWidth + gap)
+            .attr('y', rangeScale(data[0]['first']))
+            .attr('dy', '0.3em')
+            .text(data[0]['first']);
+
+        var text_2 = container.append('text')
+            .attr('text-anchor', 'end')
+            .attr('x', -gap)
+            .attr('y', rangeScale(data[1]['first']))
+            .attr('dy', '0.3em')
+            .text(data[1]['first']);
+
+        var text_3 = container.append('text')
+            .attr('x', lineWidth + gap)
+            .attr('y', rangeScale(data[2]['first']))
+            .attr('dy', '0.3em')
+            .text(data[2]['first']);
+
+        var text_4 = container.append('text')
+            .attr('text-anchor', 'end')
+            .attr('x', -gap)
+            .attr('y', rangeScale(data[3]['first']))
+            .attr('dy', '0.3em')
+            .text(data[3]['first']);
+
+        var text_5 = container.append('text')
+            .attr('x', lineWidth + gap)
+            .attr('y', rangeScale(data[4]['first']))
+            .attr('dy', '0.3em')
+            .text(data[4]['first']);
+
+        (function () {
+            var i = 1;
+            (function repeat() {
+                i == 5 && (i = 0);
+                hor_line_1 = hor_line_1.transition(t)
+                    .attr('y1', rangeScale(data[0][index[i]]))
+                    .attr('y2', rangeScale(data[0][index[i]]))
+                    .on('end', function() {
+                        i++;
+                        repeat();
+                    });
+            })();
+        })();
+
+        (function () {
+            var i = 1;
+            (function repeat() {
+                i == 5 && (i = 0);
+                ver_line = ver_line.transition(t)
+                    .attr('y1', rangeScale(data[0][index[i]]))
+                    .attr('y2', rangeScale(data[4][index[i]]))
+                    .on('end', function() {
+                        i++;
+                        repeat();
+                    });
+            })();
+        })();
+
+        (function () {
+            var i = 1;
+            (function repeat() {
+                i == 5 && (i = 0);
+                rect = rect.transition(t)
+                    .attr('y', rangeScale(data[1][index[i]]))
+                    .attr('height', rangeScale(data[3][index[i]]) - rangeScale(data[1][index[i]]))
+                    .on('end', function() {
+                        i++;
+                        repeat();
+                    });
+            })();
+        })();
+
+        (function () {
+            var i = 1;
+            (function repeat() {
+                i == 5 && (i = 0);
+                hor_line_2 = hor_line_2.transition(t)
+                    .attr('y1', rangeScale(data[2][index[i]]))
+                    .attr('y2', rangeScale(data[2][index[i]]))
+                    .on('end', function() {
+                        i++;
+                        repeat();
+                    });
+            })();
+        })();
+
+        (function () {
+            var i = 1;
+            (function repeat() {
+                i == 5 && (i = 0);
+                hor_line_3 = hor_line_3.transition(t)
+                    .attr('y1', rangeScale(data[4][index[i]]))
+                    .attr('y2', rangeScale(data[4][index[i]]))
+                    .on('end', function() {
+                        i++;
+                        repeat();
+                    });
+            })();
+        })();
+
+        (function () {
+            var i = 1;
+            (function repeat() {
+                i == 5 && (i = 0);
+                text_1 = text_1.transition(t)
+                    .attr('y', rangeScale(data[0][index[i]]))
+                    .text(data[0][index[i]])
+                    .on('end', function() {
+                        i++;
+                        repeat();
+                    });
+            })();
+        })();
+
+        (function () {
+            var i = 1;
+            (function repeat() {
+                i == 5 && (i = 0);
+                text_2 = text_2.transition(t)
+                    .attr('y', rangeScale(data[1][index[i]]))
+                    .text(data[1][index[i]])
+                    .on('end', function() {
+                        i++;
+                        repeat();
+                    });
+            })();
+        })();
+
+        (function () {
+            var i = 1;
+            (function repeat() {
+                i == 5 && (i = 0);
+                text_3 = text_3.transition(t)
+                    .attr('y', rangeScale(data[2][index[i]]))
+                    .text(data[2][index[i]])
+                    .on('end', function() {
+                        i++;
+                        repeat();
+                    });
+            })();
+        })();
+
+        (function () {
+            var i = 1;
+            (function repeat() {
+                i == 5 && (i = 0);
+                text_4 = text_4.transition(t)
+                    .attr('y', rangeScale(data[3][index[i]]))
+                    .text(data[3][index[i]])
+                    .on('end', function() {
+                        i++;
+                        repeat();
+                    });
+            })();
+        })();
+
+        (function () {
+            var i = 1;
+            (function repeat() {
+                i == 5 && (i = 0);
+                text_5 = text_5.transition(t)
+                    .attr('y', rangeScale(data[4][index[i]]))
+                    .text(data[4][index[i]])
+                    .on('end', function() {
+                        i++;
+                        repeat();
+                    });
+            })();
+        })();
+    });
+
+    //将tsv文件中字符串转换为数字
+    function type(d) {
+        var data = {};
+        var keys = d3.keys(d);
+        for (var i = 1; i < keys.length; i++) {
+            d[keys[i]] = +d[keys[i]];
+        }
+        return d;
+    }
+    </script>
+</body>
+
+</html>
